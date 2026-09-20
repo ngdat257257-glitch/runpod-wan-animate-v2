@@ -1,0 +1,33 @@
+{
+  "_comment": "Danh sach model can tai vao Network Volume. Sua duong dan URL neu HuggingFace doi cau truc thu muc. Kiem tra tai https://huggingface.co/Comfy-Org/SCAIL-2/tree/main truoc khi chay that.",
+  "models": [
+    {
+      "url": "https://huggingface.co/Comfy-Org/SCAIL-2/resolve/main/diffusion_models/wan2.1_14B_SCAIL_2_fp8_scaled.safetensors",
+      "dest": "diffusion_models/wan2.1_14B_SCAIL_2_fp8_scaled.safetensors"
+    },
+    {
+      "url": "https://huggingface.co/Comfy-Org/SCAIL-2/resolve/main/vae/Wan2_1_VAE_bf16.safetensors",
+      "dest": "vae/Wan2_1_VAE_bf16.safetensors"
+    },
+    {
+      "url": "https://huggingface.co/Comfy-Org/SCAIL-2/resolve/main/text_encoders/umt5-xxl-enc-bf16.safetensors",
+      "dest": "text_encoders/umt5-xxl-enc-bf16.safetensors"
+    },
+    {
+      "url": "https://huggingface.co/Comfy-Org/SCAIL-2/resolve/main/clip_vision/CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors",
+      "dest": "clip_vision/CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors"
+    },
+    {
+      "url": "https://huggingface.co/Comfy-Org/sam3.1/resolve/main/checkpoints/sam3.1_multiplex_fp16.safetensors",
+      "dest": "checkpoints/sam3.1_multiplex_fp16.safetensors"
+    },
+    {
+      "url": "https://huggingface.co/Comfy-Org/SCAIL-2/resolve/main/loras/lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank128_bf16.safetensors",
+      "dest": "loras/lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank128_bf16.safetensors"
+    },
+    {
+      "url": "https://huggingface.co/Comfy-Org/SCAIL-2/resolve/main/loras/wan2.1_SCAIL_2_DPO_lora_bf16.safetensors",
+      "dest": "loras/wan2.1_SCAIL_2_DPO_lora_bf16.safetensors"
+    }
+  ]
+}

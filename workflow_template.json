@@ -1,0 +1,700 @@
+{
+  "150": {
+    "inputs": {
+      "value": 576
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "Width"
+    }
+  },
+  "151": {
+    "inputs": {
+      "value": 1024
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "Height"
+    }
+  },
+  "182": {
+    "inputs": {
+      "model": "wan2.1_14B_SCAIL_2_fp8_scaled.safetensors",
+      "base_precision": "fp16",
+      "quantization": "disabled",
+      "load_device": "offload_device",
+      "attention_mode": "sageattn",
+      "rms_norm_function": "default"
+    },
+    "class_type": "WanAnimatePlus ModelLoader",
+    "_meta": {
+      "title": "WanAnimatePlus ModelLoader"
+    }
+  },
+  "183": {
+    "inputs": {
+      "model": [
+        "184",
+        0
+      ],
+      "block_swap_args": [
+        "217",
+        0
+      ]
+    },
+    "class_type": "WanAnimatePlus SetBlockSwap",
+    "_meta": {
+      "title": "WanAnimatePlus SetBlockSwap"
+    }
+  },
+  "184": {
+    "inputs": {
+      "model": [
+        "182",
+        0
+      ],
+      "lora": [
+        "219",
+        0
+      ]
+    },
+    "class_type": "WanAnimatePlus SetLoRAs",
+    "_meta": {
+      "title": "WanAnimatePlus SetLoRAs"
+    }
+  },
+  "185": {
+    "inputs": {
+      "model_name": "Wan2_1_VAE_bf16.safetensors",
+      "precision": "bf16",
+      "use_cpu_cache": false,
+      "verbose": false
+    },
+    "class_type": "WanAnimatePlus VAELoader",
+    "_meta": {
+      "title": "WanAnimatePlus VAELoader"
+    }
+  },
+  "186": {
+    "inputs": {
+      "video_info": [
+        "221",
+        3
+      ]
+    },
+    "class_type": "VHS_VideoInfoLoaded",
+    "_meta": {
+      "title": "Video Info (Loaded) 🎥🅥🅗🅢"
+    }
+  },
+  "187": {
+    "inputs": {
+      "enable_vae_tiling": false,
+      "tile_x": 272,
+      "tile_y": 272,
+      "tile_stride_x": 144,
+      "tile_stride_y": 216,
+      "normalization": "default",
+      "vae": [
+        "185",
+        0
+      ],
+      "samples": [
+        "194",
+        0
+      ]
+    },
+    "class_type": "WanAnimatePlus Decode",
+    "_meta": {
+      "title": "WanAnimatePlus Decode"
+    }
+  },
+  "188": {
+    "inputs": {
+      "width": [
+        "212",
+        0
+      ],
+      "height": [
+        "213",
+        0
+      ],
+      "upscale_method": "bicubic",
+      "keep_proportion": "crop",
+      "pad_color": "0, 0, 0",
+      "crop_position": "center",
+      "divisible_by": 16,
+      "device": "cpu",
+      "image": [
+        "199",
+        0
+      ]
+    },
+    "class_type": "ImageResizeKJv2",
+    "_meta": {
+      "title": "Resize Image v2"
+    }
+  },
+  "190": {
+    "inputs": {
+      "Number": "0"
+    },
+    "class_type": "Int",
+    "_meta": {
+      "title": "跳过帧数"
+    }
+  },
+  "191": {
+    "inputs": {
+      "width": [
+        "212",
+        0
+      ],
+      "height": [
+        "213",
+        0
+      ],
+      "upscale_method": "bilinear",
+      "keep_proportion": "pad_edge",
+      "pad_color": "0, 0, 0",
+      "crop_position": "center",
+      "divisible_by": 2,
+      "device": "cpu",
+      "image": [
+        "221",
+        0
+      ]
+    },
+    "class_type": "ImageResizeKJv2",
+    "_meta": {
+      "title": "Resize Image v2"
+    }
+  },
+  "192": {
+    "inputs": {
+      "text": "person",
+      "clip": [
+        "193",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "193": {
+    "inputs": {
+      "ckpt_name": "sam3.1_multiplex_fp16.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "194": {
+    "inputs": {
+      "sampler_inputs": [
+        "197",
+        0
+      ]
+    },
+    "class_type": "WanAnimatePlus SamplerFromSettings",
+    "_meta": {
+      "title": "WanAnimatePlus SamplerFromSettings"
+    }
+  },
+  "195": {
+    "inputs": {
+      "detection_threshold": 0.5,
+      "max_objects": 6,
+      "detect_interval": 1,
+      "images": [
+        "191",
+        0
+      ],
+      "model": [
+        "193",
+        0
+      ],
+      "conditioning": [
+        "192",
+        0
+      ]
+    },
+    "class_type": "SAM3_VideoTrack",
+    "_meta": {
+      "title": "SAM3 Video Track"
+    }
+  },
+  "196": {
+    "inputs": {
+      "detection_threshold": 0.5,
+      "max_objects": 6,
+      "detect_interval": 1,
+      "images": [
+        "206",
+        0
+      ],
+      "model": [
+        "193",
+        0
+      ],
+      "conditioning": [
+        "192",
+        0
+      ]
+    },
+    "class_type": "SAM3_VideoTrack",
+    "_meta": {
+      "title": "SAM3 Video Track"
+    }
+  },
+  "197": {
+    "inputs": {
+      "steps": 4,
+      "cfg": 1.0,
+      "shift": 5.0,
+      "seed": [
+        "198",
+        0
+      ],
+      "force_offload": false,
+      "scheduler": "euler",
+      "riflex_freq_index": 0,
+      "denoise_strength": 1.0,
+      "batched_cfg": false,
+      "rope_function": "comfy",
+      "start_step": 0,
+      "end_step": -1,
+      "add_noise_to_samples": false,
+      "guidance_mode": "cfg",
+      "apg_eta": 0.5,
+      "apg_momentum": 0.0,
+      "apg_norm_threshold": 8.0,
+      "apg_omega": 4.0,
+      "apg_omega_I": 4.5,
+      "apg_omega_TI": 4.0,
+      "chain_omega_V": 1.25,
+      "chain_omega_I": 4.5,
+      "chain_omega_TI": 4.01,
+      "model": [
+        "183",
+        0
+      ],
+      "image_embeds": [
+        "203",
+        0
+      ],
+      "text_embeds": [
+        "218",
+        0
+      ]
+    },
+    "class_type": "WanAnimatePlus SamplerSettings",
+    "_meta": {
+      "title": "WanAnimatePlus SamplerSettings"
+    }
+  },
+  "198": {
+    "inputs": {
+      "seed": 856820708045205
+    },
+    "class_type": "Seed (rgthree)",
+    "_meta": {
+      "title": "Seed (rgthree)"
+    },
+    "is_changed": [
+      856820708045205
+    ]
+  },
+  "199": {
+    "inputs": {
+      "image": "IMG_7696_1787137381349.jpeg"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    },
+    "is_changed": [
+      "0db78a3d46cfe92ee67b56ba1700442c55b592d73a0dd195445e7dc5277a0d58"
+    ]
+  },
+  "200": {
+    "inputs": {
+      "inputcount": 2,
+      "Update inputs": null,
+      "image_1": [
+        "206",
+        0
+      ]
+    },
+    "class_type": "ImageBatchMultiV2",
+    "_meta": {
+      "title": "Image Batch Multi V2"
+    }
+  },
+  "201": {
+    "inputs": {
+      "clip_name": "CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors"
+    },
+    "class_type": "CLIPVisionLoader",
+    "_meta": {
+      "title": "Load CLIP Vision"
+    }
+  },
+  "202": {
+    "inputs": {
+      "strength": 1.0,
+      "crop": "center",
+      "combine_embeds": "batch",
+      "force_offload": true,
+      "tiles": 0,
+      "ratio": 0.5,
+      "clip_vision": [
+        "201",
+        0
+      ],
+      "images": [
+        "200",
+        0
+      ]
+    },
+    "class_type": "WanAnimatePlus ClipVisionEncode V2",
+    "_meta": {
+      "title": "WanAnimatePlus ClipVisionEncode V2"
+    }
+  },
+  "203": {
+    "inputs": {
+      "width": [
+        "212",
+        0
+      ],
+      "height": [
+        "213",
+        0
+      ],
+      "num_frames": [
+        "186",
+        1
+      ],
+      "frame_window_size": 81,
+      "force_offload": true,
+      "pose_strength": 1.0,
+      "ref_strength": 1.0,
+      "replacement_mode": [
+        "205",
+        0
+      ],
+      "tiled_vae": false,
+      "transition_colormatch": "disabled",
+      "loop_colormatch_reference": "main_ref_image",
+      "prefix_alpha_crop": false,
+      "preserve_main_ref_background": [
+        "204",
+        0
+      ],
+      "single_frame_prefix_encoding": true,
+      "by wuwukasi（bilibili）": false,
+      "vae": [
+        "185",
+        0
+      ],
+      "clip_embeds": [
+        "202",
+        0
+      ],
+      "ref_image": [
+        "206",
+        0
+      ],
+      "pose_images": [
+        "207",
+        0
+      ],
+      "prefix_mask": [
+        "216",
+        2
+      ],
+      "pose_image_mask": [
+        "216",
+        0
+      ],
+      "reference_image_mask": [
+        "216",
+        1
+      ]
+    },
+    "class_type": "WanAnimatePlus SCAIL_2 Embeds",
+    "_meta": {
+      "title": "WanAnimatePlus SCAIL_2 Embeds"
+    }
+  },
+  "204": {
+    "inputs": {
+      "boolean": [
+        "205",
+        0
+      ]
+    },
+    "class_type": "InvertBoolean",
+    "_meta": {
+      "title": "Invert Boolean"
+    }
+  },
+  "205": {
+    "inputs": {
+      "value": false
+    },
+    "class_type": "PrimitiveBoolean",
+    "_meta": {
+      "title": "ture = 人物替换  |   false = 动作迁移"
+    }
+  },
+  "206": {
+    "inputs": {
+      "input1": [
+        "188",
+        0
+      ]
+    },
+    "class_type": "FastGroupsBypassSwitch",
+    "_meta": {
+      "title": "Fast Groups Bypass Switch"
+    }
+  },
+  "207": {
+    "inputs": {
+      "switch": false,
+      "on_false": [
+        "211",
+        0
+      ]
+    },
+    "class_type": "ComfySwitchNodeV2",
+    "_meta": {
+      "title": "false=原视频动作  |  true=骨骼图动作"
+    }
+  },
+  "208": {
+    "inputs": {
+      "object_indices": "",
+      "track_data": [
+        "195",
+        0
+      ]
+    },
+    "class_type": "SAM3_TrackToMask",
+    "_meta": {
+      "title": "Pose video mask"
+    }
+  },
+  "209": {
+    "inputs": {
+      "expand": 12,
+      "incremental_expandrate": 0.0,
+      "tapered_corners": true,
+      "flip_input": false,
+      "blur_radius": 6.0,
+      "lerp_alpha": 1.0,
+      "decay_factor": 1.0,
+      "fill_holes": false,
+      "mask": [
+        "208",
+        0
+      ]
+    },
+    "class_type": "GrowMaskWithBlur",
+    "_meta": {
+      "title": "Grow Mask With Blur"
+    }
+  },
+  "210": {
+    "inputs": {
+      "mask": [
+        "209",
+        0
+      ]
+    },
+    "class_type": "MaskToImage",
+    "_meta": {
+      "title": "Convert Mask to Image"
+    }
+  },
+  "211": {
+    "inputs": {
+      "blend_factor": 1.0,
+      "blend_mode": "multiply",
+      "image1": [
+        "191",
+        0
+      ],
+      "image2": [
+        "210",
+        0
+      ]
+    },
+    "class_type": "ImageBlend",
+    "_meta": {
+      "title": "Cắt nền pose video"
+    }
+  },
+  "212": {
+    "inputs": {
+      "value": [
+        "150",
+        0
+      ]
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "宽"
+    }
+  },
+  "213": {
+    "inputs": {
+      "value": [
+        "151",
+        0
+      ]
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "高"
+    }
+  },
+  "215": {
+    "inputs": {
+      "Number": "300"
+    },
+    "class_type": "Int",
+    "_meta": {
+      "title": "读取帧数"
+    }
+  },
+  "216": {
+    "inputs": {
+      "object_indices": "",
+      "sort_by": "left_to_right",
+      "prefix_mask_mode": "Multi Image Multi Color",
+      "replacement_mode": [
+        "205",
+        0
+      ],
+      "render_device": "auto",
+      "driving_track_data": [
+        "195",
+        0
+      ],
+      "ref_track_data": [
+        "196",
+        0
+      ]
+    },
+    "class_type": "SCAIL2ColoredMaskV2",
+    "_meta": {
+      "title": "Create SCAIL-2 Colored Mask V2"
+    }
+  },
+  "217": {
+    "inputs": {
+      "blocks_to_swap": 30,
+      "offload_img_emb": false,
+      "offload_txt_emb": false,
+      "use_non_blocking": true,
+      "vace_blocks_to_swap": 1,
+      "prefetch_blocks": 0,
+      "block_swap_debug": false
+    },
+    "class_type": "WanAnimatePlus BlockSwap",
+    "_meta": {
+      "title": "WanAnimatePlus BlockSwap"
+    }
+  },
+  "218": {
+    "inputs": {
+      "model_name": "umt5-xxl-enc-bf16.safetensors",
+      "precision": "bf16",
+      "positive_prompt": "一个角色在跳舞",
+      "negative_prompt": "文字，字幕，色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
+      "quantization": "disabled",
+      "use_disk_cache": false,
+      "device": "gpu"
+    },
+    "class_type": "WanVideoTextEncodeCached",
+    "_meta": {
+      "title": "WanVideo TextEncode Cached"
+    }
+  },
+  "219": {
+    "inputs": {
+      "lora_0": "none",
+      "strength_0": 0.6,
+      "lora_1": "lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank128_bf16.safetensors",
+      "strength_1": 1.0,
+      "lora_2": "wan2.1_SCAIL_2_DPO_lora_bf16.safetensors",
+      "strength_2": 1.0,
+      "lora_3": "none",
+      "strength_3": 0.7,
+      "lora_4": "none",
+      "strength_4": 0.5,
+      "low_mem_load": false,
+      "merge_loras": false
+    },
+    "class_type": "WanAnimatePlus LoraSelectMulti",
+    "_meta": {
+      "title": "WanAnimatePlus LoraSelectMulti"
+    }
+  },
+  "220": {
+    "inputs": {
+      "frame_rate": [
+        "186",
+        0
+      ],
+      "loop_count": 0,
+      "filename_prefix": "2026-07-03/20260703_143312_Wanimate",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "187",
+        0
+      ],
+      "audio": [
+        "221",
+        2
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "Video Combine 🎥🅥🅗🅢"
+    }
+  },
+  "221": {
+    "inputs": {
+      "video": "5143791_1787137381396.mp4",
+      "force_rate": 30.0,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": [
+        "215",
+        0
+      ],
+      "start_time": 0.0,
+      "format": "AnimateDiff"
+    },
+    "class_type": "VHS_LoadVideoFFmpeg",
+    "_meta": {
+      "title": "Load Video FFmpeg (Upload) 🎥🅥🅗🅢"
+    },
+    "is_changed": [
+      "bb95b6a98483ba484376949d14759f243d5806f27be131c224c9690ba5d89d6d"
+    ]
+  }
+}
