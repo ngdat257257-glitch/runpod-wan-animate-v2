@@ -41,11 +41,15 @@ def start_comfyui_server():
     global _server_started
     if _server_started:
         return
-    subprocess.Popen(
+    proc = subprocess.Popen(
         ["python3", "main.py", "--listen", "0.0.0.0", "--port", str(COMFYUI_PORT)],
         cwd=COMFYUI_DIR,
     )
     for _ in range(180):
+        if proc.poll() is not None:
+            raise RuntimeError(
+                f"ComfyUI server exited unexpectedly with code {proc.returncode}."
+            )
         try:
             r = requests.get(f"{COMFYUI_URL}/system_stats", timeout=2)
             if r.status_code == 200:

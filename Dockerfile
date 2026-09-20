@@ -2,14 +2,6 @@
 # Dockerfile (BAN NHE) — ComfyUI + Wan-Animate cho RunPod Serverless
 # KHONG bake model vao image -> nhe hon nhieu (~3-5GB thay vi ~20GB)
 # Model se duoc tai vao Network Volume luc container khoi dong lan dau
-#
-# QUAN TRONG neu build tren Mac (M1/M2/M3 - chip ARM):
-# RunPod GPU server chay tren CPU x86_64 (Intel/AMD), khac kien truc voi Mac (ARM).
-# Phai build image cho dung kien truc x86_64, neu khong container se khong chay
-# duoc tren RunPod. Dung lenh nay khi build (xem chi tiet trong README):
-#
-#   docker buildx build --platform linux/amd64 -t <ten>/wan-animate-worker:latest --push .
-#
 # ==============================================================================
 
 FROM runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04
@@ -47,21 +39,28 @@ RUN git clone https://github.com/M1kep/ComfyLiterals.git comfyliterals
 
 # XAC NHAN MOI: repo nay chua 5 node quan trong dung trong workflow:
 # SCAIL2ColoredMaskV2, ComfySwitchNodeV2, InvertBoolean, ImageBatchMultiV2,
-# FastGroupsBypassSwitch (xac nhan qua README chinh thuc cua repo, khong doan)
+# FastGroupsBypassSwitch
 RUN git clone https://github.com/FX-FeiHou/ComfyUI-FeiHou-Toolbox.git
-
-# SAM3_VideoTrack / SAM3_TrackToMask la node built-in cua ComfyUI core (PR #13408)
-# -> khong can cai them gi, chi can ComfyUI ban moi (git clone o tren la ban moi nhat)
 
 WORKDIR /workspace/ComfyUI
 
 # ------------------------------------------------------------------------------
-# 3. Cai RunPod SDK
+# 3. Patch tuong thich cho comfy_kitchen & nang cap PyTorch 2.5+
+# ------------------------------------------------------------------------------
+# Fix loi: Parameter stride has unsupported type list[int] trong comfy_kitchen
+RUN python3 -c 'import glob, os; \
+    files = glob.glob("/usr/local/lib/python3.11/dist-packages/comfy_kitchen/**/*.py", recursive=True); \
+    [open(f, "w").write("import typing\n" + open(f).read().replace("stride: list[int]", "stride: typing.List[int]").replace("tuple[int, int, int]", "typing.Tuple[int, int, int]")) for f in files if os.path.isfile(f)]' || true
+
+RUN pip install --no-cache-dir --upgrade "torch>=2.5.0" "torchvision>=0.20.0" --index-url https://download.pytorch.org/whl/cu124 || true
+
+# ------------------------------------------------------------------------------
+# 4. Cai RunPod SDK
 # ------------------------------------------------------------------------------
 RUN pip install --no-cache-dir runpod requests
 
 # ------------------------------------------------------------------------------
-# 4. Copy code (khong copy model - model tai luc runtime)
+# 5. Copy code (khong copy model - model tai luc runtime)
 # ------------------------------------------------------------------------------
 COPY handler.py /workspace/handler.py
 COPY download_models.py /workspace/download_models.py
@@ -69,7 +68,7 @@ COPY workflow_template.json /workspace/workflow_template.json
 COPY model_manifest.json /workspace/model_manifest.json
 
 # ------------------------------------------------------------------------------
-# 5. Entry point
+# 6. Entry point
 # ------------------------------------------------------------------------------
 WORKDIR /workspace
 CMD ["python3", "-u", "handler.py"]

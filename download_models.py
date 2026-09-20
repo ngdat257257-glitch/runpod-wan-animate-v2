@@ -1,16 +1,5 @@
 """
 download_models.py — Tải model vào Network Volume, CHỈ 1 LẦN DUY NHẤT.
-
-Cách hoạt động:
-- RunPod Network Volume được mount vào container tại /runpod-volume (mặc định).
-- Script kiểm tra từng file trong model_manifest.json:
-    - Nếu đã tồn tại trong /runpod-volume/models/... -> bỏ qua (không tải lại)
-    - Nếu chưa có -> tải về, lưu vào Network Volume
-- ComfyUI models/ sẽ được symlink trỏ tới /runpod-volume/models để dùng lại
-  giữa các lần chạy (container có thể bị huỷ/tạo mới nhưng Network Volume thì giữ nguyên).
-
-Lần chạy đầu tiên sẽ chậm (phải tải hết model, ~15-20GB).
-Các lần chạy sau NHANH vì model đã có sẵn trong Network Volume.
 """
 
 import json
@@ -63,17 +52,26 @@ def ensure_models_downloaded():
 
 
 def link_models_to_comfyui():
-    """Symlink từng thư mục con trong models/ (Network Volume) vào ComfyUI/models/."""
+    """Symlink tất cả file model từ Network Volume vào ComfyUI/models/."""
     os.makedirs(COMFYUI_MODELS_DIR, exist_ok=True)
     if not os.path.isdir(MODELS_DIR):
         return
-    for subfolder in os.listdir(MODELS_DIR):
-        src = os.path.join(MODELS_DIR, subfolder)
-        dst = os.path.join(COMFYUI_MODELS_DIR, subfolder)
-        if os.path.islink(dst) or os.path.exists(dst):
-            continue
-        os.symlink(src, dst)
-        print(f"[link] {dst} -> {src}")
+    for root, dirs, files in os.walk(MODELS_DIR):
+        rel_path = os.path.relpath(root, MODELS_DIR)
+        target_dir = COMFYUI_MODELS_DIR if rel_path == "." else os.path.join(COMFYUI_MODELS_DIR, rel_path)
+        os.makedirs(target_dir, exist_ok=True)
+        for f in files:
+            if f.endswith(".tmp"):
+                continue
+            src_file = os.path.join(root, f)
+            dst_file = os.path.join(target_dir, f)
+            if os.path.islink(dst_file) or os.path.exists(dst_file):
+                continue
+            try:
+                os.symlink(src_file, dst_file)
+                print(f"[link] {dst_file} -> {src_file}")
+            except Exception as e:
+                print(f"[link error] {dst_file}: {e}")
 
 
 if __name__ == "__main__":
