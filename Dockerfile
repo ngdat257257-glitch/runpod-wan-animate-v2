@@ -45,7 +45,7 @@ RUN git clone https://github.com/FX-FeiHou/ComfyUI-FeiHou-Toolbox.git
 WORKDIR /workspace/ComfyUI
 
 # ------------------------------------------------------------------------------
-# 3. Patch tuong thich cho comfy_kitchen & nang cap PyTorch 2.5+
+# 3. Patch tuong thich cho comfy_kitchen & dong bo PyTorch Stack (torch + torchvision + torchaudio)
 # ------------------------------------------------------------------------------
 RUN pip install --no-cache-dir --upgrade comfy_kitchen || true
 
@@ -60,7 +60,15 @@ RUN python3 -c 'import site, os; \
 
 RUN sed -i 's/comfy_kitchen.int8_attention_is_available()/getattr(comfy_kitchen, "int8_attention_is_available", lambda: False)()/g' /workspace/ComfyUI/comfy/ldm/modules/attention.py || true
 
-RUN pip install --no-cache-dir --upgrade "torch>=2.5.0" "torchvision>=0.20.0" --index-url https://download.pytorch.org/whl/cu124 || true
+# Nang cap dong bo ca 3 goi PyTorch (torch + torchvision + torchaudio) len 2.5+ cung ABI de tranh loi undefined symbol libtorchaudio
+RUN pip install --no-cache-dir --upgrade "torch>=2.5.0" "torchvision>=0.20.0" "torchaudio>=2.5.0" --index-url https://download.pytorch.org/whl/cu124
+
+# Cai them cac goi phu thuoc pho bien cua WanVideo & VideoHelperSuite
+RUN pip install --no-cache-dir diffusers accelerate sentencepiece opencv-python-headless moviepy imageio-ffmpeg
+
+# Kiem tra xac thuc import ngay trong luc build Docker (neu loi build se dung lai ngay de dam bao chat luong)
+RUN python3 -c "import torch, torchvision, torchaudio, comfy_kitchen; print('PyTorch stack OK:', torch.__version__, torchaudio.__version__)"
+RUN python3 -c "import sys; sys.path.insert(0, '/workspace/ComfyUI'); import execution, latent_preview; from comfy.sd import VAE; print('ComfyUI Core imports OK!')"
 
 # ------------------------------------------------------------------------------
 # 4. Cai RunPod SDK
