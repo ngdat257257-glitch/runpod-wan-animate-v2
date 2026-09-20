@@ -47,10 +47,18 @@ WORKDIR /workspace/ComfyUI
 # ------------------------------------------------------------------------------
 # 3. Patch tuong thich cho comfy_kitchen & nang cap PyTorch 2.5+
 # ------------------------------------------------------------------------------
+RUN pip install --no-cache-dir --upgrade comfy_kitchen || true
+
 # Fix loi: Parameter stride has unsupported type list[int] trong comfy_kitchen
 RUN python3 -c 'import glob, os; \
     files = glob.glob("/usr/local/lib/python3.11/dist-packages/comfy_kitchen/**/*.py", recursive=True); \
     [open(f, "w").write("import typing\n" + open(f).read().replace("stride: list[int]", "stride: typing.List[int]").replace("tuple[int, int, int]", "typing.Tuple[int, int, int]")) for f in files if os.path.isfile(f)]' || true
+
+# Fix loi: AttributeError: module comfy_kitchen has no attribute int8_attention_is_available
+RUN python3 -c 'import site, os; \
+    [open(os.path.join(p, "comfy_kitchen/__init__.py"), "a").write("\ndef int8_attention_is_available():\n    return False\n") for p in site.getsitepackages() if os.path.exists(os.path.join(p, "comfy_kitchen/__init__.py"))]' || true
+
+RUN sed -i 's/comfy_kitchen.int8_attention_is_available()/getattr(comfy_kitchen, "int8_attention_is_available", lambda: False)()/g' /workspace/ComfyUI/comfy/ldm/modules/attention.py || true
 
 RUN pip install --no-cache-dir --upgrade "torch>=2.5.0" "torchvision>=0.20.0" --index-url https://download.pytorch.org/whl/cu124 || true
 

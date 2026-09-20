@@ -41,14 +41,23 @@ def start_comfyui_server():
     global _server_started
     if _server_started:
         return
+    log_file = open("/workspace/comfyui.log", "w")
     proc = subprocess.Popen(
         ["python3", "main.py", "--listen", "0.0.0.0", "--port", str(COMFYUI_PORT)],
         cwd=COMFYUI_DIR,
+        stdout=log_file,
+        stderr=subprocess.STDOUT,
     )
     for _ in range(180):
         if proc.poll() is not None:
+            log_file.flush()
+            try:
+                with open("/workspace/comfyui.log", "r") as f:
+                    err_log = f.read()[-1500:]
+            except Exception:
+                err_log = ""
             raise RuntimeError(
-                f"ComfyUI server exited unexpectedly with code {proc.returncode}."
+                f"ComfyUI server exited with code {proc.returncode}.\nLogs:\n{err_log}"
             )
         try:
             r = requests.get(f"{COMFYUI_URL}/system_stats", timeout=2)
